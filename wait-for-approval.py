@@ -7,6 +7,9 @@ ISSUE_NUMBER = os.environ['INPUT_ISSUE_NUMBER']
 APPROVAL_COMMAND = os.environ.get('INPUT_APPROVAL_COMMAND', '/approve')
 REPO = os.environ['GITHUB_REPOSITORY']
 
+# Add your allowed GitHub usernames here
+ALLOWED_APPROVERS = [user.strip() for user in os.environ.get('INPUT_APPROVERS', '').split(',') if user.strip()]
+
 headers = {
     "Authorization": f"token {GITHUB_TOKEN}",
     "Accept": "application/vnd.github.v3+json"
@@ -18,12 +21,14 @@ def get_comments():
     resp.raise_for_status()
     return resp.json()
 
-print(f"Waiting for approval command '{APPROVAL_COMMAND}' on issue/PR #{ISSUE_NUMBER}...")
+print(f"Waiting for approval command '{APPROVAL_COMMAND}' on issue/PR #{ISSUE_NUMBER} from {ALLOWED_APPROVERS}...")
 
 while True:
     comments = get_comments()
-    if any(comment['body'].strip() == APPROVAL_COMMAND for comment in comments):
-        print("Approval received!")
-        break
+    for comment in comments:
+        if (comment['body'].strip() == APPROVAL_COMMAND and
+            (not ALLOWED_APPROVERS or comment['user']['login'] in ALLOWED_APPROVERS)):
+            print(f"Approval received from {comment['user']['login']}!")
+            exit(0)
     print("No approval yet, sleeping for 60 seconds...")
     time.sleep(60)
