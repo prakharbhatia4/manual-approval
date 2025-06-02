@@ -14,7 +14,7 @@ jobs:
         uses: ./.github/actions/manual-approval
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          issue_number: ${{ github.event.issue.number || github.run_id }}
+          issue_number: ${{ github.event.issue.number }}
           approval_command: '/approve'
           # approvers: 'octocat,anotheruser'
 
