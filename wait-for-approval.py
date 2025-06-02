@@ -6,8 +6,6 @@ GITHUB_TOKEN = os.environ['INPUT_GITHUB_TOKEN']
 ISSUE_NUMBER = os.environ['INPUT_ISSUE_NUMBER']
 APPROVAL_COMMAND = os.environ.get('INPUT_APPROVAL_COMMAND', '/approve')
 REPO = os.environ['GITHUB_REPOSITORY']
-
-# Add your allowed GitHub usernames here
 ALLOWED_APPROVERS = [user.strip() for user in os.environ.get('INPUT_APPROVERS', '').split(',') if user.strip()]
 
 headers = {
@@ -21,7 +19,7 @@ def get_comments():
     resp.raise_for_status()
     return resp.json()
 
-print(f"Waiting for approval command '{APPROVAL_COMMAND}' on issue/PR #{ISSUE_NUMBER} from {ALLOWED_APPROVERS}...")
+print(f"Waiting for approval command '{APPROVAL_COMMAND}' on issue/PR #{ISSUE_NUMBER} from {ALLOWED_APPROVERS or 'anyone'}...")
 
 while True:
     comments = get_comments()

@@ -1,0 +1,19 @@
+name: 'Manual Approval'
+description: 'Wait for a manual approval comment on an issue or PR'
+inputs:
+  github_token:
+    description: 'GitHub token'
+    required: true
+  issue_number:
+    description: 'Issue or PR number to watch'
+    required: true
+  approval_command:
+    description: 'Approval command (e.g., /approve)'
+    required: false
+    default: '/approve'
+  approvers:
+    description: 'Comma-separated list of GitHub usernames allowed to approve'
+    required: false
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
