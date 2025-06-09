@@ -1,5 +1,6 @@
 name: Test
-on: [push]
+on:
+  pull_request:
 
 jobs:
   Testingggggggg:
@@ -14,7 +15,7 @@ jobs:
         uses: ./.github/actions/manual-approval
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          issue_number: ${{ github.event.issue.number }}
+          issue_number: ${{ github.event.pull_request.number }}
           approval_command: '/approve'
           # approvers: 'octocat,anotheruser'
 
