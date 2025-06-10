@@ -1,29 +1,22 @@
-name: Test
 on:
   workflow_dispatch:
     inputs:
-      pr_number:
-        description: 'Pull Request number'
+      issue_number:
+        description: 'GitHub Issue number to watch for approval'
         required: true
-  pull_request:
 
 jobs:
-  Testingggggggg:
+  approve:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Debug PR number
-        run: |
-          echo "PR number from event: ${{ github.event.pull_request.number }}"
-          echo "PR number from input: ${{ github.event.inputs.pr_number }}"
-
       - name: Wait for manual approval
         uses: ./.github/actions/manual-approval
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          issue_number: ${{ github.event.pull_request.number || github.event.inputs.pr_number }}
+          issue_number: ${{ github.event.inputs.issue_number }}
           approval_command: '/approve'
 
       - name: Run Deploy script file
