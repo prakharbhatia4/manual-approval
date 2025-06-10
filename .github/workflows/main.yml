@@ -1,6 +1,10 @@
 name: Test
-on: 
+on:
   workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'Pull Request number'
+        required: true
   pull_request:
 
 jobs:
@@ -10,15 +14,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # ... your other steps ...
+      - name: Debug PR number
+        run: |
+          echo "PR number from event: ${{ github.event.pull_request.number }}"
+          echo "PR number from input: ${{ github.event.inputs.pr_number }}"
 
       - name: Wait for manual approval
         uses: ./.github/actions/manual-approval
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          issue_number: ${{ github.event.pull_request.number }}
+          issue_number: ${{ github.event.pull_request.number || github.event.inputs.pr_number }}
           approval_command: '/approve'
-          # approvers: 'octocat,anotheruser'
 
       - name: Run Deploy script file
         run: echo "Deploying..."
